@@ -1,0 +1,24 @@
+[package]
+name = "cargo-gamma-rt"
+description = "Runtime support library injected into crates under mutation test by cargo-gamma"
+keywords = ["cargo", "mutation-testing", "testing"]
+categories = ["development-tools::testing"]
+readme = "README.md"
+
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+
+# HARD CONSTRAINT: zero dependencies, no features, no build.rs.
+# This crate is injected into the dependency graph of the crate under test; anything
+# else perturbs feature unification and breaks --offline.
+[lib]
+name = "gamma_rt"
+
+[dependencies]
+
+[lints]
+workspace = true

@@ -1,0 +1,21 @@
+[package]
+name = "cargo-gamma"
+description = "Fast mutation testing for Rust"
+keywords = ["cargo", "cargo-plugin", "mutation-testing", "testing"]
+categories = ["command-line-utilities", "development-tools::testing"]
+readme = "../../README.md"
+
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+
+[dependencies]
+cargo-gamma-lib.workspace = true
+mimalloc.workspace = true
+terminal_size.workspace = true
+
+[lints]
+workspace = true
