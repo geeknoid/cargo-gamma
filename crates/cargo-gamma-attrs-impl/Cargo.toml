@@ -1,0 +1,28 @@
+[package]
+name = "cargo-gamma-attrs-impl"
+description = "Implementation of the inert attribute macros exposed by cargo-gamma-attrs"
+keywords = ["cargo", "mutation-testing", "testing"]
+categories = ["development-tools::testing"]
+readme = "README.md"
+
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+
+# HARD CONSTRAINT: this crate must not become a proc-macro crate.
+# A proc macro's code runs only inside rustc while some *other* crate is being compiled, which
+# puts it out of reach of both the coverage harness and the mutation runtime. Keeping the logic
+# in an ordinary library is the whole reason this crate exists — see the crate docs.
+
+[dependencies]
+proc-macro2 = { workspace = true }
+# `#[gamma::value(<expr>)]` promises its argument is one valid Rust expression, and only a real
+# expression parser can keep that promise. Checking it with tokens alone would accept things the
+# compiler later rejects at the expansion site, which is the diagnostic this crate exists to avoid.
+syn = { workspace = true }
+
+[lints]
+workspace = true

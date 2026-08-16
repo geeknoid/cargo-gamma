@@ -1,0 +1,14 @@
+# How cargo-gamma is run against cargo-gamma.
+#
+# Mutating this workspace is the sharpest test the tool gets, so the scope is kept as wide as it
+# can honestly be. The one exclusion below is a scoping decision rather than a suppression: a
+# suppression says "this mutant is not worth acting on", which still counts it, whereas these
+# files hold nothing whose behavior the suite is supposed to be judging in the first place.
+
+# Test fixtures and helpers, compiled into the library so integration tests can reach them.
+#
+# A mutant here changes the scaffolding a test stands on, not the code under test. Most of what
+# survives in this file is the text of `.expect` messages that only ever run when a fixture is
+# already broken, and a test asserting that wording would pin the phrasing of a panic nobody is
+# meant to see. Scoring the tool against its own fixtures measures the wrong thing.
+exclude-files = ["crates/cargo-gamma-lib/src/testing.rs"]

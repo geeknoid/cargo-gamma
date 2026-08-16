@@ -1,0 +1,60 @@
+# Nextest configuration.
+#
+# The purpose of this file is flake *detection*, not flake tolerance. Parts of this suite
+# coordinate threads through real timing rather than a forced interleaving, and those are the
+# tests that go intermittently red first and whose intermittent redness is most likely to be
+# dismissed with a re-run. Nextest already distinguishes a test that failed from a test that
+# failed and then passed on retry, reporting the latter as FLAKY, so the detection is nearly
+# free — the job of this file is to switch it on and make sure the result is not quietly folded
+# into a green build.
+#
+# See `docs/DESIGN.md`, "Flaky tests", for the policy that governs what happens when a test is
+# found flaky.
+
+[profile.default]
+# No retries locally, deliberately. A developer running the suite should see exactly what
+# happened; a retry that silently rescues a failing test is how a flake becomes normal.
+#
+# Nextest also reads this file when `cargo-gamma` runs `cargo nextest run` against *this*
+# workspace, which is a second and stronger reason to keep this at zero. A retry during a
+# mutation run can turn a test that killed a mutant into one that let it survive, which inflates
+# the mutation score — the precise failure this tool exists to prevent. Retries are confined to
+# the `ci` profile below, which no mutation run selects.
+retries = 0
+fail-fast = false
+status-level = "fail"
+final-status-level = "flaky"
+failure-output = "immediate-final"
+
+[profile.ci]
+# CI retries, purely so that a flake is *identified* as a flake rather than reported as a
+# failure and re-run by hand. A test that passes on retry is reported as FLAKY and is surfaced
+# as an annotation by the workflow; it is not treated as a clean pass.
+retries = { backoff = "fixed", count = 2, delay = "1s" }
+fail-fast = false
+status-level = "retry"
+final-status-level = "flaky"
+failure-output = "immediate-final"
+
+# Report a test as SLOW after a minute, but never terminate it. Some integration tests in this
+# workspace build fixture crates, which is legitimately slow on a cold Windows runner, and a
+# terminate-after here would manufacture exactly the intermittent failures this profile exists to
+# detect.
+slow-timeout = { period = "60s" }
+
+# Quarantine goes here. To quarantine a test, add an override naming it, with a reason and a
+# tracking item — never by adding retries to the default profile, and never by deleting the
+# assertion. Keeping quarantine in this file means it appears in review as a deliberate act.
+#
+# [[profile.ci.overrides]]
+# filter = 'test(=some::flaky_test)'
+# retries = 5
+# # Quarantined <date>, tracked by <item>. Remove when the underlying timing dependence is fixed.
+
+[profile.ci.junit]
+# The machine-readable record. A flaky test appears here with both its failed attempts and its
+# eventual pass, which is what lets the workflow tell a flake from a pass without parsing
+# terminal output.
+path = "junit.xml"
+store-success-output = false
+store-failure-output = true

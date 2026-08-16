@@ -1,0 +1,25 @@
+[package]
+name = "cargo-gamma-process"
+description = "Internal bounded process-tree lifecycle for cargo-gamma"
+keywords = ["cargo", "mutation-testing", "testing"]
+categories = ["development-tools::testing"]
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+
+[features]
+fault-injection = []
+
+[dependencies]
+cargo-gamma-unsafe.workspace = true
+
+[dev-dependencies]
+camino.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,25 @@
+[package]
+name = "cargo-gamma-attrs"
+description = "Inert attribute macros for suppressing cargo-gamma mutations"
+keywords = ["cargo", "mutation-testing", "testing"]
+categories = ["development-tools::testing"]
+readme = "README.md"
+
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+
+# Users write `#[gamma::skip]`, which is an attribute *path*, not a package name, so the
+# lib name is deliberately short: it appears in every instrumented crate.
+[lib]
+name = "gamma"
+proc-macro = true
+
+[dependencies]
+cargo-gamma-attrs-impl = { workspace = true }
+
+[lints]
+workspace = true

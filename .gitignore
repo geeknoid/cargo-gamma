@@ -1,0 +1,6 @@
+/target
+/.idea
+/gamma.out
+/mutants*
+/.claude
+/gamma-report.json
